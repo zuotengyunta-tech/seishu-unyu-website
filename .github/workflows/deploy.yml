@@ -1,85 +1,68 @@
+media:
+  input: assets/uploads
+  output: /assets/uploads
 
-name: Publish Seishu Unyu Website
+content:
+  - name: site
+    label: 連絡先と採用案内（簡単編集）
+    type: file
+    path: assets/content/site.json
+    format: json
+    fields:
+      - name: phone
+        label: 電話番号
+        type: string
+        required: true
+      - name: fax
+        label: FAX番号
+        type: string
+      - name: recruit_title
+        label: 採用のお問い合わせ見出し
+        type: string
+      - name: recruit_description
+        label: 採用のお問い合わせ説明文
+        type: text
+      - name: recruit_button
+        label: 採用の問い合わせボタン
+        type: string
+      - name: contact_intro
+        label: お問い合わせページの説明文
+        type: text
+      - name: contact_note
+        label: お問い合わせの補足文
+        type: text
 
-on:
-  push:
-    branches:
-      - main
-  workflow_dispatch:
-
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: github-pages
-  cancel-in-progress: true
-
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v4
-
-      - name: Assemble website files
-        shell: bash
-        run: |
-          set -euo pipefail
-          mkdir -p publish
-
-          # Gather HTML files from the repository root and the uploaded folder.
-          # If both places contain the same filename, prefer the uploaded folder.
-          for file in ./*.html Seishu_Unyu_GitHub_Ready/*.html; do
-            if [ -f "$file" ]; then
-              cp "$file" publish/
-            fi
-          done
-
-          # Copy the assets folder into the same level as index.html.
-          if [ -d Seishu_Unyu_GitHub_Ready/assets ]; then
-            cp -a Seishu_Unyu_GitHub_Ready/assets publish/
-          elif [ -d assets ]; then
-            cp -a assets publish/
-          else
-            echo "::error::assets folder was not found."
-            exit 1
-          fi
-
-          # GitHub Pages should serve the files without Jekyll processing.
-          touch publish/.nojekyll
-
-          if [ ! -f publish/index.html ]; then
-            echo "::error::index.html was not found."
-            exit 1
-          fi
-          if ! grep -qi '<html' publish/index.html; then
-            echo "::error::index.html does not appear to contain an HTML document."
-            exit 1
-          fi
-          for required in assets/style.css assets/site.js; do
-            if [ ! -f "publish/$required" ]; then
-              echo "::error::Missing publish/$required"
-              exit 1
-            fi
-          done
-
-          echo "Prepared website files:"
-          find publish -maxdepth 2 -type f | sort
-
-      - name: Configure GitHub Pages
-        uses: actions/configure-pages@v5
-
-      - name: Upload website files
-        uses: actions/upload-pages-artifact@v4
-        with:
-          path: publish
-
-      - name: Publish website
-        id: deployment
-        uses: actions/deploy-pages@v4
+  - name: news
+    label: お知らせ投稿・編集
+    type: file
+    path: assets/content/news.json
+    format: json
+    list: true
+    fields:
+      - name: title
+        label: 記事タイトル
+        type: string
+        required: true
+      - name: date
+        label: 投稿日
+        type: date
+        options:
+          format: yyyy-MM-dd
+      - name: category
+        label: カテゴリー
+        type: select
+        options:
+          values:
+            - name: notice
+              label: お知らせ
+            - name: recruit
+              label: 採用情報
+            - name: press
+              label: その他
+      - name: body
+        label: 本文（改行できます）
+        type: text
+      - name: published
+        label: 公開する
+        type: boolean
+        default: false
