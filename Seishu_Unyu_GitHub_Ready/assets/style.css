@@ -653,3 +653,18 @@ h2 { font-size: clamp(30px, 3.05vw, 47px); letter-spacing: -.045em; }
   }
 }
 
+
+/* ===== 2026-11 update: phone-only inquiries and recruitment qualifications ===== */
+.contact-main .contact-channels { grid-template-columns: minmax(0, 1fr); max-width: 790px; margin-bottom: clamp(44px, 5vw, 72px); }
+.recruit-eligibility { max-width: 1000px; border-top: 1px solid var(--line); padding-top: clamp(34px, 4vw, 56px); }
+.recruit-eligibility .heading-compact { margin-bottom: clamp(24px, 3vw, 38px); }
+.recruit-eligibility .heading-compact h2 { font-size: clamp(30px, 3vw, 43px); }
+.eligibility-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 20px; margin: 0; padding: 0; list-style: none; }
+.eligibility-list li { position: relative; display: flex; align-items: center; min-height: 61px; padding: 15px 20px 15px 44px; border: 1px solid #d3e1eb; background: #f5f9fc; font-size: 15px; font-weight: 600; line-height: 1.75; color: #153b62; }
+.eligibility-list li::before { content: ''; width: 8px; height: 8px; background: #1d659c; border-radius: 50%; position: absolute; left: 21px; top: 50%; transform: translateY(-50%); }
+.recruit-eligibility > .small-note { margin-top: 22px; color: var(--muted); font-size: 14px; line-height: 1.8; }
+@media (max-width: 700px) {
+  .eligibility-list { grid-template-columns: 1fr; gap: 10px; }
+  .eligibility-list li { padding-block: 13px; }
+  .contact-main .contact-channels { width: 100%; }
+}
