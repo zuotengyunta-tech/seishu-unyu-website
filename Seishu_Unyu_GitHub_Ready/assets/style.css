@@ -668,3 +668,95 @@ h2 { font-size: clamp(30px, 3.05vw, 47px); letter-spacing: -.045em; }
   .eligibility-list li { padding-block: 13px; }
   .contact-main .contact-channels { width: 100%; }
 }
+
+
+/* ===== Content consistency: phone inquiries and recruitment qualifications ===== */
+.contact-main .contact-channels { max-width: 100%; margin-bottom: clamp(40px, 4.5vw, 64px); }
+.recruit-eligibility { max-width: 100%; }
+.recruit-eligibility .heading-compact { margin-bottom: 12px; }
+.eligibility-intro { font-size: 15px; line-height: 1.85; color: var(--muted); margin: 0 0 24px; }
+.eligibility-groups { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 24px; align-items: stretch; }
+.eligibility-group { padding: clamp(18px,2.8vw,30px); background: #f5f8fb; border: 1px solid #d3e1eb; min-width: 0; }
+.eligibility-group h3 { font-size: clamp(16px,1.65vw,20px); line-height: 1.65; margin-bottom: 16px; font-weight: 700; color: #173c62; }
+.eligibility-group .eligibility-list { display: flex; flex-direction: column; gap: 0; margin: 0; padding: 0; }
+.eligibility-group .eligibility-list li { display: block; min-height: unset; padding: 13px 4px 13px 26px; border: 0; border-top: 1px solid #d9e5ec; background: transparent; font-size: 15px; line-height: 1.75; font-weight: 500; }
+.eligibility-group .eligibility-list li::before { left: 6px; top: 25px; transform: none; width: 7px; height: 7px; }
+.recruit-eligibility > .small-note { margin-top: 22px; }
+@media (max-width: 700px) {
+  .eligibility-groups { grid-template-columns: 1fr; gap: 16px; }
+  .eligibility-group .eligibility-list li { font-size: 14px; }
+}
+
+
+/* ===== 2026-11-23: Careers typography alignment =====
+   Scope intentionally limited to job accordions. Reuse the site's local Japanese font,
+   consistent roles, line-heights and text colors without changing content or behavior. */
+#positions .job,
+#positions .job summary,
+#positions .job .accordion-body,
+#positions .job .data-list,
+#positions .job .button {
+  font-family: var(--font);
+  font-style: normal;
+  letter-spacing: .012em;
+}
+#positions .job summary {
+  color: var(--ink);
+  line-height: 1.6;
+}
+#positions .job summary:hover,
+#positions .job summary:focus-visible {
+  color: var(--ink); /* Keep job titles consistent even when hovering */
+}
+#positions .job summary > span {
+  min-width: 0;
+}
+#positions .job summary small {
+  display: block;
+  margin: 0 0 7px;
+  color: var(--blue);
+  font: 700 13px/1.7 var(--font);
+  letter-spacing: .012em;
+}
+#positions .job summary strong {
+  display: block;
+  margin: 0;
+  color: var(--ink);
+  font: 700 clamp(22px, 2vw, 25px)/1.45 var(--font);
+  letter-spacing: -.015em;
+}
+#positions .job .accordion-body > p {
+  margin: 0 0 19px;
+  color: var(--muted);
+  font: 400 15px/1.9 var(--font);
+  letter-spacing: .012em;
+}
+#positions .job .data-list dt,
+#positions .job .data-list dd {
+  padding: 15px 12px;
+  font: 400 15px/1.8 var(--font);
+  letter-spacing: .012em;
+}
+#positions .job .data-list dt {
+  color: var(--ink);
+  font-weight: 700;
+}
+#positions .job .data-list dd {
+  color: var(--muted);
+  font-weight: 400;
+}
+#positions .job .button {
+  min-height: 48px;
+  font: 700 14px/1.5 var(--font);
+  letter-spacing: .012em;
+}
+@media (max-width: 700px) {
+  #positions .job summary small { font-size: 12px; }
+  #positions .job summary strong { font-size: 21px; }
+  #positions .job .accordion-body > p,
+  #positions .job .data-list dt,
+  #positions .job .data-list dd { font-size: 14px; }
+  #positions .job .button { font-size: 13px; }
+  #positions .job .data-list dt,
+  #positions .job .data-list dd { padding: 12px 6px; }
+}
