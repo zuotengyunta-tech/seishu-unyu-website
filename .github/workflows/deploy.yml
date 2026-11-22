@@ -27,28 +27,50 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Locate website files
-        id: locate
+      - name: Assemble website files
         shell: bash
         run: |
           set -euo pipefail
-          SITE_DIR=""
-          while IFS= read -r FILE; do
-            DIR="$(dirname "$FILE")"
-            if [ -f "$DIR/assets/style.css" ] && [ -f "$DIR/assets/site.js" ]; then
-              SITE_DIR="$DIR"
-              break
-            fi
-          done < <(find . -type f -name index.html -not -path './.git/*' | sort)
+          mkdir -p publish
 
-          if [ -z "$SITE_DIR" ]; then
-            echo "::error::Website folder not found. Ensure index.html, assets/style.css and assets/site.js are together."
-            find . -maxdepth 6 \( -name index.html -o -name style.css -o -name site.js \) -print
+          # Gather HTML files from the repository root and the uploaded folder.
+          # If both places contain the same filename, prefer the uploaded folder.
+          for file in ./*.html Seishu_Unyu_GitHub_Ready/*.html; do
+            if [ -f "$file" ]; then
+              cp "$file" publish/
+            fi
+          done
+
+          # Copy the assets folder into the same level as index.html.
+          if [ -d Seishu_Unyu_GitHub_Ready/assets ]; then
+            cp -a Seishu_Unyu_GitHub_Ready/assets publish/
+          elif [ -d assets ]; then
+            cp -a assets publish/
+          else
+            echo "::error::assets folder was not found."
             exit 1
           fi
 
-          echo "Publishing website from: $SITE_DIR"
-          echo "site_dir=$SITE_DIR" >> "$GITHUB_OUTPUT"
+          # GitHub Pages should serve the files without Jekyll processing.
+          touch publish/.nojekyll
+
+          if [ ! -f publish/index.html ]; then
+            echo "::error::index.html was not found."
+            exit 1
+          fi
+          if ! grep -qi '<html' publish/index.html; then
+            echo "::error::index.html does not appear to contain an HTML document."
+            exit 1
+          fi
+          for required in assets/style.css assets/site.js; do
+            if [ ! -f "publish/$required" ]; then
+              echo "::error::Missing publish/$required"
+              exit 1
+            fi
+          done
+
+          echo "Prepared website files:"
+          find publish -maxdepth 2 -type f | sort
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
@@ -56,7 +78,7 @@ jobs:
       - name: Upload website files
         uses: actions/upload-pages-artifact@v4
         with:
-          path: ${{ steps.locate.outputs.site_dir }}
+          path: publish
 
       - name: Publish website
         id: deployment
