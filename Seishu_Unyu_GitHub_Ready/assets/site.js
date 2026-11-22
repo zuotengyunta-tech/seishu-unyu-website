@@ -125,99 +125,9 @@ function setupGallery() {
   schedule();
 }
 
-function setupInquiry() {
-  const form = document.querySelector("#inquiry-form");
-  if (!form) return;
-
-  const kind = form.querySelector("#kind");
-  const organization = form.querySelector("#organization");
-  const name = form.querySelector("#name");
-  const email = form.querySelector("#email");
-  const message = form.querySelector("#message");
-  const review = document.querySelector("#review");
-  const reviewHeading = document.querySelector("#review-heading");
-  const values = document.querySelector("#review-values");
-  const status = document.querySelector("#save-status");
-  const query = new URLSearchParams(window.location.search);
-  const requestedKind = query.get("service");
-  if (Array.from(kind.options).some((option) => option.value === requestedKind)) kind.value = requestedKind;
-  const role = { trailer: "トレーラードライバー", crane: "3tユニックドライバー" }[query.get("role")];
-  if (kind.value === "recruit" && typeof role === "string") message.value = role + "について相談します。";
-  const recipient = () => window.__seishuSiteSettings?.email || "atsumi@seishu-unyu.jp";
-  const rows = () => [
-    ["お問い合わせの種類", kind.selectedOptions[0].textContent],
-    ["会社名", organization.value.trim() || "未入力"],
-    ["お名前", name.value.trim()],
-    ["メールアドレス", email.value.trim()],
-    ["お問い合わせ内容", message.value.trim()]
-  ];
-
-  const subject = () => "【お問い合わせ】" + kind.selectedOptions[0].textContent + "／" + name.value.trim();
-  const mailBody = () => "勢州運輸有限会社 ご担当者様\r\n\r\n" + rows().map(([label, value]) => "【" + label + "】\r\n" + value).join("\r\n\r\n");
-
-  [name, message].forEach((field) => field.addEventListener("input", () => field.setCustomValidity("")));
-  form.querySelector("#review-button").disabled = false;
-  form.addEventListener("submit", (event) => {
-    event.preventDefault();
-    [name, message].forEach((field) => field.setCustomValidity(field.value.trim() ? "" : "入力してください。"));
-    if (!form.reportValidity()) return;
-    values.replaceChildren();
-    rows().forEach(([label, content]) => {
-      const row = document.createElement("div");
-      const dt = document.createElement("dt");
-      const dd = document.createElement("dd");
-      dt.textContent = label;
-      dd.textContent = content;
-      row.append(dt, dd);
-      values.append(row);
-    });
-    form.hidden = true;
-    review.hidden = false;
-    status.textContent = "";
-    document.querySelector("#open-email").href = "mailto:" + recipient() + "?subject=" + encodeURIComponent(subject()) + "&body=" + encodeURIComponent(mailBody());
-    document.querySelector("#copy-fallback").hidden = true;
-    reviewHeading.focus();
-  });
-  document.querySelector("#edit-inquiry").addEventListener("click", () => {
-    review.hidden = true;
-    form.hidden = false;
-    document.querySelector("#copy-fallback").hidden = true;
-    kind.focus();
-  });
-  document.querySelector("#copy-inquiry").addEventListener("click", async () => {
-    const content = "宛先 " + recipient() + "\r\n件名 " + subject() + "\r\n\r\n" + mailBody();
-    try {
-      await navigator.clipboard.writeText(content);
-      status.textContent = "宛先と本文をコピーしました。メールに貼り付けて送信してください。";
-    } catch {
-      const fallback = document.querySelector("#copy-fallback");
-      const text = document.querySelector("#copy-content");
-      text.value = content;
-      fallback.hidden = false;
-      text.focus();
-      text.select();
-      status.textContent = "下の文章を選択してコピーしてください。";
-    }
-  });
-  document.querySelector("#save-inquiry").addEventListener("click", () => {
-    const line = "\r\n";
-    const content = "宛先 " + recipient() + line + "件名 " + subject() + line + line + mailBody();
-    const file = new Blob(["\uFEFF", content], { type: "text/plain;charset=utf-8" });
-    const url = URL.createObjectURL(file);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "勢州運輸_お問い合わせメモ.txt";
-    document.body.append(link);
-    link.click();
-    link.remove();
-    window.setTimeout(() => URL.revokeObjectURL(url), 30000);
-    status.textContent = "相談メモのダウンロードを開始しました。";
-  });
-}
 
 setupMenu();
 setupGallery();
-setupInquiry();
 
 
 // Pages CMS content integration: JSON files in assets/content are the only content source.
@@ -271,13 +181,7 @@ function applySiteSettings(settings) {
       }
     });
   }
-  const email = String(settings.email || "").trim();
-  if (email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    document.querySelectorAll('a[href^="mailto:"]').forEach((anchor) => {
-      anchor.href = "mailto:" + email;
-      if (anchor.textContent.includes("@")) anchor.textContent = email;
-    });
-  }
+
 }
 
 function renderNews(items) {
