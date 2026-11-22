@@ -524,3 +524,132 @@ h2 { font-size: clamp(30px, 3.05vw, 47px); letter-spacing: -.045em; }
 }
 
 .heading-phrase { display: inline-block; }
+
+/* Easy CMS-generated news posts */
+.news-entries { display: grid; gap: 18px; margin-block: 12px 48px; }
+.cms-news-card { padding: clamp(22px,3.5vw,38px); border: 1px solid #d9e3eb; background: #fff; box-shadow: 0 8px 28px rgb(18 44 67 / .035); }
+.cms-news-meta { display: flex; gap: 18px; align-items: center; color: #4d6478; font-size: 13px; letter-spacing: .03em; }
+.cms-news-meta span { color: #174f78; font-weight: 700; padding: 3px 10px; background: #eaf3fa; border-radius: 3px; }
+.cms-news-card h2 { font-size: clamp(20px,2.5vw,26px); line-height: 1.5; margin: 16px 0 12px; color: #173c62; }
+.cms-news-body { white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.95; margin: 0; color: #314a60; }
+
+
+/* ===== HOME: automatic hero gallery controls ===== */
+.hero-slide { transition: opacity .8s ease, visibility 0s .8s; }
+.hero-slide.active { transition: opacity .8s ease; }
+
+/* ===== HOME: service-card animated mini-scenes ===== */
+.home-page .service-text-card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  transition: border-color .25s ease, box-shadow .3s ease, transform .3s ease;
+}
+.home-page .service-text-card:hover,
+.home-page .service-text-card:focus-visible {
+  transform: translateY(-3px);
+  border-color: #6397be;
+  box-shadow: 0 14px 34px rgba(24,74,116,.12);
+}
+.home-page .service-text-card::before {
+  content: "";
+  position: absolute;
+  right: -75px;
+  bottom: -92px;
+  width: 280px;
+  height: 210px;
+  z-index: 0;
+  border-radius: 50%;
+  background: radial-gradient(ellipse,rgba(205,232,246,.55),transparent 70%);
+  opacity: 0;
+  transition: opacity .45s ease;
+  pointer-events: none;
+}
+.home-page .service-text-card:hover::before,
+.home-page .service-text-card:focus-visible::before { opacity: 1; }
+/* Reserve a dedicated lane below the card text so the animation never covers the description. */
+.home-page .service-text-card .card-content { position: relative; z-index: 2; padding-bottom: 115px; }
+.card-animation {
+  display: block;
+  position: absolute;
+  bottom: 10px;
+  right: 17px;
+  z-index: 1;
+  width: min(174px, 55%);
+  height: 106px;
+  pointer-events: none;
+  opacity: .95;
+}
+.card-animation svg { display: block; width: 100%; height: 100%; overflow: hidden; }
+.scene-ground { stroke: #bdd5e5; stroke-width: 2.5; stroke-linecap: round; fill: none; }
+.house-foundation, .house-walls, .house-roof, .house-details, .house-sparkles,
+.drive-truck, .speed-streaks, .delivery-truck, .delivery-boxes, .delivery-sparkle { opacity: 0; }
+.house-foundation, .house-walls, .house-roof, .house-details { transform-box: fill-box; transform-origin: center bottom; }
+.house-foundation, .house-walls { transform: scaleY(.02); }
+.house-roof { transform: translateY(40px); }
+.house-details { transform: scale(.8); }
+:is(.service-text-card:hover, .service-text-card:focus-visible) .house-foundation { animation: house-build .38s .05s both cubic-bezier(.2,.8,.3,1.2); }
+:is(.service-text-card:hover, .service-text-card:focus-visible) .house-walls { animation: house-build .7s .24s both cubic-bezier(.18,.9,.25,1.08); }
+:is(.service-text-card:hover, .service-text-card:focus-visible) .house-roof { animation: roof-land .58s .73s both cubic-bezier(.15,.84,.28,1.18); }
+:is(.service-text-card:hover, .service-text-card:focus-visible) .house-details { animation: house-finish .42s 1.12s both ease-out; }
+:is(.service-text-card:hover, .service-text-card:focus-visible) .house-sparkles { animation: sparkle 1.05s 1.18s both ease-out; }
+:is(.service-text-card:hover, .service-text-card:focus-visible) .drive-truck { animation: truck-drive 3.4s .05s linear infinite; }
+:is(.service-text-card:hover, .service-text-card:focus-visible) .speed-streaks { animation: road-lines 3.4s .05s linear infinite; }
+:is(.service-text-card:hover, .service-text-card:focus-visible) .delivery-truck { animation: local-drive 4.4s .05s linear infinite; }
+:is(.service-text-card:hover, .service-text-card:focus-visible) .delivery-boxes { animation: parcels-arrive 4.4s .05s linear infinite; }
+:is(.service-text-card:hover, .service-text-card:focus-visible) .delivery-sparkle { animation: unload-sparkle 4.4s .05s linear infinite; }
+@keyframes house-build { from { opacity:0; transform:scaleY(.02); } to { opacity:1; transform:scaleY(1); } }
+@keyframes roof-land { from { opacity:0; transform:translateY(40px); } to { opacity:1; transform:translateY(0); } }
+@keyframes house-finish { from { opacity:0; transform:scale(.75); } to { opacity:1; transform:scale(1); } }
+@keyframes sparkle { 0% { opacity:0; } 40% { opacity:1; } 100% { opacity:.8; } }
+@keyframes truck-drive {
+  0% { opacity:0; transform:translateX(-160px) translateY(0); }
+  9% { opacity:1; }
+  90% { opacity:1; }
+  100% { opacity:0; transform:translateX(188px) translateY(0); }
+}
+@keyframes road-lines { 0%,100% { opacity:0; } 15%,75% { opacity:.9; } }
+@keyframes local-drive {
+  0% { opacity:0; transform:translateX(-150px); }
+  9% { opacity:1; }
+  28%,66% { opacity:1; transform:translateX(8px); }
+  85% { opacity:1; transform:translateX(130px); }
+  100% { opacity:0; transform:translateX(205px); }
+}
+@keyframes parcels-arrive {
+  0%,36% { opacity:0; transform:translateY(-17px); }
+  47%,74% { opacity:1; transform:translateY(0); }
+  88%,100% { opacity:0; transform:translateY(0); }
+}
+@keyframes unload-sparkle { 0%,40%,77%,100% { opacity:0; } 49%,68% { opacity:1; } }
+@media (min-width: 701px) and (max-width: 1130px) {
+  .home-page .service-text-card .card-content { padding-bottom: 110px; }
+  .card-animation { width: min(145px, 70%); height: 91px; right: 10px; }
+}
+@media (max-width: 700px) {
+  .home-page .service-text-card .card-content { padding-bottom: 112px; }
+  .card-animation { width: 164px; height: 101px; right: 15px; }
+}
+/* Touch devices display a complete static illustration rather than an inaccessible hover-only effect. */
+@media (hover: none) {
+  .house-foundation,.house-walls,.house-roof,.house-details,.house-sparkles,
+  .drive-truck,.delivery-truck,.delivery-boxes,.delivery-sparkle { opacity: 1; animation: none !important; }
+  .house-foundation,.house-walls,.house-roof,.house-details { transform: none; }
+  .drive-truck { transform: translateX(0); }
+  .delivery-truck { transform: translateX(8px); }
+  .home-page .service-text-card:hover { transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-slide,.hero-slide.active { transition: none; }
+  :is(.service-text-card:hover,.service-text-card:focus-visible) .house-foundation,
+  :is(.service-text-card:hover,.service-text-card:focus-visible) .house-walls,
+  :is(.service-text-card:hover,.service-text-card:focus-visible) .house-roof,
+  :is(.service-text-card:hover,.service-text-card:focus-visible) .house-details,
+  :is(.service-text-card:hover,.service-text-card:focus-visible) .house-sparkles,
+  :is(.service-text-card:hover,.service-text-card:focus-visible) .drive-truck,
+  :is(.service-text-card:hover,.service-text-card:focus-visible) .delivery-truck,
+  :is(.service-text-card:hover,.service-text-card:focus-visible) .delivery-boxes {
+    opacity: 1; animation: none; transform: none;
+  }
+}
+
